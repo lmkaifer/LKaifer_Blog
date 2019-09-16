@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+LKaifer_Blog/Views/Home/* linguist-vendored
+LKaifer_Blog/Views/Comments/* linguist-vendored
