@@ -349,8 +349,6 @@ healthchecksdb
 MigrationBackup/
 
 *.config
-LKaifer_Blog/Content/
-LKaifer_Blog/Scripts/
 LKaifer_Blog/Migrations/
 LKaifer_Blog/App_Data/
 LKaifer_Blog/Properties/

@@ -2,3 +2,10 @@
 * text=auto
 LKaifer_Blog/Views/Home/* linguist-vendored
 LKaifer_Blog/Views/Comments/* linguist-vendored
+LKaifer_Blog/Views/Manage/* linguist-vendored
+LKaifer_Blog/Views/Account/* linguist-vendored
+LKaifer_Blog/Content/* linguist-vendored
+LKaifer_Blog/Scripts/* linguist-vendored
+LKaifer_Blog/Content/css/main.css linguist-vendored=false
+LKaifer_Blog/Content/css/base.css linguist-vendored=false
+LKaifer_Blog/Scripts/js/main.js linguist-vendored=false
