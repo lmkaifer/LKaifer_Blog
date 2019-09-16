@@ -1,0 +1,151 @@
+﻿@model LKaifer_Blog.Models.BlogPost
+
+
+
+
+
+<style>
+    [class*="col-"] {
+        float: initial;
+    }
+</style>
+
+
+
+
+<section class="s-content s-content--top-padding s-content--narrow">
+
+    <article class="row entry format-standard">
+
+        <div class="entry__media col-full">
+            <div class="entry__post-thumb">
+                <img src="images/thumbs/single/standard/standard-1000.jpg"
+                     srcset="images/thumbs/single/standard/standard-2000.jpg 2000w,
+                                 images/thumbs/single/standard/standard-1000.jpg 1000w,
+                                 images/thumbs/single/standard/standard-500.jpg 500w"
+                     sizes="(max-width: 2000px) 100vw, 2000px" alt="">
+            </div>
+        </div>
+
+        <div class="entry__header col-full">
+            <h1 class="entry__header-title display-1">
+                Blog Post Edit
+            </h1>
+            <ul class="entry__header-meta">
+                <li class="date"></li>
+                <li class="byline">
+
+                    <a href="#0"></a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-full entry__main">
+
+            <p class="lead drop-cap">
+
+
+                @using (Html.BeginForm("Edit", "BlogPosts", null, FormMethod.Post, new { enctype = "Multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        @Html.HiddenFor(model => model.Id)
+                        @Html.HiddenFor(model => model.Slug)
+                        @Html.HiddenFor(model => model.Created)
+                        @Html.HiddenFor(model => model.MediaURL)
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            @Html.LabelFor(model => model.Abstract, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Abstract, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Abstract, "", new { @class = "text-danger" })
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Body, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Body, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2" style="margin-top: 40px;margin-bottom: 0px;">Current Image</label>
+                            @if (!string.IsNullOrWhiteSpace(Model.MediaURL))
+                            {
+                                <img class="img-responsive" style="height: 30vh; margin-top: 15px;margin-left: 50px;" src="@Url.Content(Model.MediaURL)" alt="" />
+
+                            }
+                            @Html.LabelFor(model => model.MediaURL, "Change Image", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                <input name="image" type="file" class="form-control" id="fileUpload" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Published, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.CheckBoxFor(model => model.Published)
+                                @Html.ValidationMessageFor(model => model.Published, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Save" class="btn btn-default" />
+                            </div>
+                        </div>
+                    </div>
+                }
+                <br />
+                <div>
+                    @Html.ActionLink("Back to List", "Index")
+                </div>
+
+            </p>
+
+
+        </div> <!-- s-entry__main -->
+
+    </article> <!-- end entry/article -->
+
+
+
+</section>
+
+@section scripts{
+
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/tinymce/tinymce.min.js"></script>
+    <script src="~/Scripts/tinymce/jquery.tinymce.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            tinymce.init({
+                selector: '#Body'
+            });
+        });
+
+
+
+
+    </script>}
+
+
+
+}

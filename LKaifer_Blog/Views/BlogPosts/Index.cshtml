@@ -1,0 +1,180 @@
+﻿@using LKaifer_Blog.Models
+@using PagedList
+@using PagedList.Mvc
+@model IPagedList<BlogPost>
+    @{ 
+        List<BlogPost> MostRecentPosts = ViewBag.CarouselPosts as List<BlogPost>;
+    }
+
+<link href="~/Content/PagedList.css" rel="stylesheet" />
+<!-- featured
+    ================================================== -->
+<section class="s-featured">
+    <div class="row">
+        <div class="col-full">
+
+            <div class="featured-slider featured" data-aos="zoom-in">
+                @foreach (var item in MostRecentPosts)
+                {
+
+                    <div class="featured__slide">
+                        <div class="entry">
+
+                            <div class="entry__background" style="background-image:url('@Url.Content(item.MediaURL)');"></div>
+
+                            <div class="entry__content">
+
+                                <h1><a href='@Url.Action("Details", "BlogPosts", new { slug = item.Slug })'>@item.Title</a></h1>
+                                <h3 style="color:whitesmoke"> @Url.Content(item.Abstract)</h3>
+                                <div class="entry__info">
+                                    <a href="#0" class="entry__profile-pic">
+                                        @*<img class="avatar" src="images/avatars/user-05.jpg" alt="">*@
+                                    </a>
+                                    <ul class="entry__meta">
+                                        <li><a href="#0">Lisa Kaifer</a></li>
+                                        @item.Created.ToString("d")
+                                    </ul>
+                                </div>
+                            </div> <!-- end entry__content -->
+                        </div>
+                    </div> <!-- end entry -->
+                } <!-- end featured__slide -->
+                @*<div class="featured__slide">
+
+                        <div class="entry">
+
+                            <div class="entry__background" style="background-image:url('images/thumbs/featured/featured-watch.jpg');"></div>
+
+                            <div class="entry__content">
+                                <span class="entry__category"><a href="#0">Management</a></span>
+
+                                <h1><a href="#0" title="">The Pomodoro Technique Really Works.</a></h1>
+
+                                <div class="entry__info">
+                                    <a href="#0" class="entry__profile-pic">
+                                        <img class="avatar" src="images/avatars/user-03.jpg" alt="">
+                                    </a>
+
+                                    <ul class="entry__meta">
+                                        <li><a href="#0">John Doe</a></li>
+                                        <li>June 13, 2018</li>
+                                    </ul>
+                                </div>
+                            </div> <!-- end entry__content -->
+
+                        </div> <!-- end entry -->
+
+                    </div> <!-- end featured__slide -->
+
+                    <div class="featured__slide">
+
+                        <div class="entry">
+
+                            <div class="entry__background" style="background-image:url('images/thumbs/featured/featured-beetle.jpg');"></div>
+
+                            <div class="entry__content">
+                                <span class="entry__category"><a href="#0">LifeStyle</a></span>
+
+                                <h1><a href="#0" title="">The difference between Classics, Vintage & Antique Cars.</a></h1>
+
+                                <div class="entry__info">
+                                    <a href="#0" class="entry__profile-pic">
+                                        <img class="avatar" src="images/avatars/user-03.jpg" alt="">
+                                    </a>
+
+                                    <ul class="entry__meta">
+                                        <li><a href="#0">John Doe</a></li>
+                                        <li>June 12, 2018</li>
+                                    </ul>
+                                </div>
+                            </div> <!-- end entry__content -->
+
+                        </div> <!-- end entry -->
+
+                    </div> <!-- end featured__slide -->*@
+
+            </div> <!-- end featured -->
+
+        </div> <!-- end col-full -->
+    </div>
+</section> <!-- end s-featured -->
+
+<section class="s-content" id="lmkaifer-main-blogpost">
+
+    <div class="row entries-wrap wide">
+        <div class="entries">
+            @foreach (var item in Model)
+            {
+
+                <article class="col-block">
+
+                    <div class="item-entry" data-aos="zoom-in">
+                        <div class="item-entry__thumb">
+                            <a href='@Url.Action("Details", "BlogPosts", new { slug = item.Slug })' class="item-entry__thumb-link">
+                                @if (item.MediaURL != null)
+                                {<img class="img-responsive" src="@Url.Content(item.MediaURL)" alt="" />
+
+                                }
+                                @*<img src="~/fonts/images/thumbs/featured/lotus-1205631_1920.jpg"
+                                    srcset="~/fonts/images/thumbs/featured/lotus-1205631_1920.jpg 1x, ~/fonts/images/thumbs/featured/lotus-1205631_1920.jpg 2x" alt="">*@
+                            </a>
+                        </div>
+
+                        <div class="item-entry__text">
+                            <div class="item-entry__cat">
+
+                            </div>
+
+                            <h1 class="item-entry__title"><a href='@Url.Action("Details", "BlogPosts", new { slug = item.Slug })'>@item.Title</a></h1>
+
+                            <div class="item-entry__date">
+                                <div>
+                                    <span>Posted by</span>
+                                    <a href="#0">Lisa Kaifer</a>
+                                    <br/>
+                                    @item.Created.ToString("d")
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <br />
+                                        <a href='@Url.Action("Edit","BlogPosts", new { id = item.Id })'>Edit</a> <span>&nbsp;</span>
+                                        <a href='@Url.Action("Delete","BlogPosts", new { id = item.Id })'>Delete</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- item-entry -->
+
+                </article> <!-- end article -->
+
+            }
+        </div> <!-- end entries -->
+    </div> <!-- end entries-wrap -->
+    <style>
+        ul.pagination a{
+            color:#696969;
+        }
+    </style>
+    <div style="margin-left:50px">
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount@Html.PagedListPager(Model, page => Url.Action("index", new { page }))
+    </div>
+
+
+    @*<div class="row pagination-wrap">
+            <div class="col-full">
+                <nav class="pgn" data-aos="fade-up">
+                    <ul>
+                        <li><a class="pgn__prev" href="#0">Prev</a></li>
+                        <li><a class="pgn__num" href="#0">1</a></li>
+                        <li><span class="pgn__num current">2</span></li>
+                        <li><a class="pgn__num" href="#0">3</a></li>
+                        <li><a class="pgn__num" href="#0">4</a></li>
+                        <li><a class="pgn__num" href="#0">5</a></li>
+                        <li><span class="pgn__num dots">…</span></li>
+                        <li><a class="pgn__num" href="#0">8</a></li>
+                        <li><a class="pgn__next" href="#0">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>*@
+
+</section> <!-- end s-content -->

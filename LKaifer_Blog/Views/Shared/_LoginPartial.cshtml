@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNet.Identity
+@using LKaifer_Blog.Models
+@if (Request.IsAuthenticated)
+
+
+{
+    <li class="has-children">
+        <a href="#0" title="">Profile</a>
+        <ul class="sub-menu">
+            <li>
+                @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+            </li>
+            <li>
+                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <a href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+                }
+            </li>
+        </ul>
+    </li>
+}
+else
+{
+    <li class="has-children">
+        <a href="#0" title="">Register/Log-In</a>
+        <ul class="sub-menu">
+            <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+            <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+        </ul>
+    </li>
+}

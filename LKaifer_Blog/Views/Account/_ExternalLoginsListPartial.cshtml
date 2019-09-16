@@ -1,0 +1,44 @@
+﻿@model LKaifer_Blog.Models.ExternalLoginListViewModel
+@using Microsoft.Owin.Security
+
+
+<p>Login using:</p>
+
+@{
+    var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+    if (loginProviders.Count() == 0)
+    {
+
+    }
+    else
+    {
+        using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl }))
+        {
+            @Html.AntiForgeryToken()
+
+            foreach (AuthenticationDescription p in loginProviders)
+            {
+                if (p.Caption == "Facebook")
+                {
+                    @*<button id="@p.AuthenticationType" value="@p.AuthenticationType" type="submit" name="provider">
+                            <img class="img-responsive"style="height:10vh"src="~/fonts/images/icons/kisspng-computer-icons-facebook-like-button-youtube-clip-a-facebook-thumbnail-5b4cc42b167932.7126380815317576110921.png" />
+                        </button>*@
+                    <button id="@p.AuthenticationType" value="@p.AuthenticationType" type="submit" name="provider" style="color:white;background-color:#3b5998;">
+                        @p.Caption
+                    </button>
+
+                }
+                else if (p.Caption == "LinkedIn")
+                {
+                    <button id="@p.AuthenticationType" value="@p.AuthenticationType" type="submit" name="provider" style="color:white;background-color:#004b7c;">
+                        @p.Caption
+                    </button>
+                }
+                @*<button id="@p.AuthenticationType" value="@p.AuthenticationType" type="submit" name="provider" class="fb-login-button" data-width="" data-size="small" data-button-type="login_with" data-auto-logout-link="false" data-use-continue-as="true">
+                    </button>*@
+            }
+        }
+
+    }
+}
+

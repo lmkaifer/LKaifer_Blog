@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "Login Failure";
+}
+<style>
+    [class*="col-"] {
+        float: initial;
+    }
+</style>
+
+<section class="s-content s-content--top-padding s-content--narrow">
+
+    <article class="row entry format-standard">
+
+        <div class="entry__media col-full">
+            <div class="entry__post-thumb">
+                <img src="images/thumbs/single/standard/standard-1000.jpg"
+                     srcset="images/thumbs/single/standard/standard-2000.jpg 2000w,
+                                 images/thumbs/single/standard/standard-1000.jpg 1000w,
+                                 images/thumbs/single/standard/standard-500.jpg 500w"
+                     sizes="(max-width: 2000px) 100vw, 2000px" alt="">
+            </div>
+        </div>
+
+        <div class="entry__header col-full">
+            <h1 class="entry__header-title display-1"></h1>
+            <ul class="entry__header-meta">
+                <li class="date"></li>
+                <li class="byline">
+
+                    <a href="#0"></a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-full entry__main">
+
+            <p class="lead drop-cap">
+
+                <hgroup>
+                    <h2>@ViewBag.Title.</h2>
+                    <h3 class="text-danger">Unsuccessful login with service.</h3>
+                </hgroup>
+
+        </div>
+
+
+    </article> <!-- end entry/article -->
+
+
+</section>

@@ -1,0 +1,425 @@
+﻿@using LKaifer_Blog.Models
+@model BlogPost
+@using Microsoft.AspNet.Identity
+
+
+
+@{
+    ViewBag.Title = "Details";
+    BlogPost prevPost = ViewBag.PreviousPost as BlogPost;
+    BlogPost nextPost = ViewBag.NextPost as BlogPost;
+    TempData["currentSlug"] = Model.Slug;
+}
+
+
+
+<!-- s-content
+    ================================================== -->
+    <section class="s-content s-content--top-padding s-content--narrow" style="background:url(../..@Url.Content(Model.MediaURL)) no-repeat center center fixed;padding-top: 60px;padding-bottom: 0px;">
+        <div style="background-color:rgba(255,255,255,0.8);">
+            <article class="row entry format-standard">
+
+                <div class="entry__media col-full">
+                    <div class="entry__post-thumb">
+                        @*<img style="position:fixed;left: -61px; opacity: 0.2;top: 78px;max-width: 150%;width: 107%;" src="@Url.Content(Model.MediaURL)"
+                        srcset="@Url.Content(Model.MediaURL) 2000w,
+                                @Url.Content(Model.MediaURL) 1000w,
+                                @Url.Content(Model.MediaURL) 500w"
+                        sizes="(max-width: 2000px) 100vw, 2000px" alt=""/>*@
+                    </div>
+                </div>
+                <div class="entry__header col-full">
+                    <h1 class="entry__header-title display-1">
+                        @Model.Title
+                    </h1>
+                    <ul class="entry__header-meta">
+                        <li class="date">@Model.Created.ToString("d")</li>
+                        <li class="byline">
+                            By
+                            <a href="#0">Lisa Kaifer</a>
+                        </li>
+                    </ul>
+                </div>
+                <p class="lead drop-cap" style="color:black">
+                    @Url.Content(Model.Abstract)</h3>
+                    <div class="col-full entry__main">
+
+                <p class="lead drop-cap">@Html.Raw(Model.Body)</p>
+
+
+
+                <div class="entry__author">
+                    <img src="~/fonts/images/IMG_20130413_155050.jpg" alt="">
+
+                    <div class="entry__author-about">
+                        <h5 class="entry__author-name">
+                            <span>Posted by</span>
+                            <a href="#0">Lisa Kaifer</a>
+                        </h5>
+
+                        <div class="entry__author-desc">
+                            <p>
+                                I am a .NET developer based in Greensboro, NC.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <br />
+                        <a href='@Url.Action("Edit","BlogPosts", new { id = Model.Id })'>Edit</a> <span>&nbsp;</span>
+                        <a href='@Url.Action("Delete","BlogPosts", new { id = Model.Id })'>Delete</a>
+                    }
+                </div>
+        </div> <!-- s-entry__main -->
+        </article> <!-- end entry/article -->
+
+
+        <div class="s-content__entry-nav">
+            <div class="row s-content__nav">
+                @if (prevPost != null)
+                {
+                    <div class="col-six s-content__prev">
+
+                        <a href='@Url.Action("Details","BlogPosts", new { slug = prevPost.Slug })' rel="prev">
+                            <span>Previous Post</span>
+                            @prevPost.Title
+                        </a>
+
+                    </div>
+                }
+                @if (nextPost != null)
+                {
+                    <div class="col-six s-content__next">
+
+                        <a href='@Url.Action("Details","BlogPosts", new { slug = nextPost.Slug })' rel="next">
+                            <span>Next Post</span>
+                            @nextPost.Title
+                        </a>
+                    </div>
+                }
+            </div>
+        </div> <!-- end s-content__pagenav -->
+        @*Create a form to collect the Comment from the logged in user*@
+
+        <div class="row">
+            <div class="col-md-12">
+                <h1>
+                    Comment Section
+                </h1>
+            </div>
+        </div>
+        <div class="col-md-12 text-center h4">
+            @{
+                var count = Model.Comments.Count();
+                var word = count == 1 ? " comment" : " comments";
+            }
+            (@count@word. . .)
+        </div>
+        <hr>
+
+
+        @foreach (var comment in Model.Comments.OrderByDescending(c => c.Created))
+        {
+            <div class="row">
+                <div class="col-md-12 commentBodyContext">
+                    @Html.Raw(comment.Body)
+                </div>
+            </div>
+            <div class="row" style="font-size:small; font-style:italic; color:gray;padding-left:10px;">
+                <div class="col-md-12">
+                    Written by: @comment.Author.Email on @comment.Created.ToString("MMMM d,yyyy")
+                </div>
+            </div>
+            <br />
+
+
+            if (User.IsInRole("Admin") || User.IsInRole("Moderator") || User.Identity.GetUserId() == comment.AuthorId)
+            {
+                <br />
+                <div class="row" style="font-size:small; font-style:italic; color:gray;padding-left:10px;">
+                    <div class="col-md-12">
+                        <a href='@Url.Action("Edit","Comments", new { id = comment.Id })'>Edit</a> <span>&nbsp;</span>
+                        <a href='@Url.Action("Delete","Comments", new { id = comment.Id })'>Delete</a>
+                    </div>
+                </div>
+            }
+        }
+
+
+        <hr>
+
+
+
+        @*Conditionally render the "Add Comment" TextArea and Button*@
+        @if (!Request.IsAuthenticated)
+        {
+    <h1>
+        Please log in or register to leave a comment:             @Html.ActionLink("Log In", "Login", "Account", new { id = Model.Id }, new { @class = "label label-danger" }) or
+        @Html.ActionLink("Register", "Register", "Account", new { id = Model.Id }, new { @class = "label label-success" })
+    </h1>
+        }
+
+        else
+        {
+            using (Html.BeginForm("Create", "Comments", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Slug)
+                @Html.Hidden("BlogPostId", Model.Id)
+
+                <div style="margin-left:30px">
+                    <input type=text id="CommentBody" name="Body" rows="5" cols="100">
+                    <button class="btn btn-primary" type="submit">Add</button>
+                </div>
+
+            }
+        }
+
+
+        <hr />
+
+        @*Displaying the comments associated with this BlogPost*@
+
+
+
+
+        @*I would like to order these comments by descending created date*@
+
+
+
+
+
+
+
+        @*<div class="comments-wrap">
+
+            <div id="comments" class="row">
+                <div class="col-full">
+
+                    <h3 class="h2">5 Comments</h3>
+
+                    <!-- START commentlist -->
+                    <ol class="commentlist">
+
+                        <li class="depth-1 comment">
+
+                            <div class="comment__avatar">
+                                <img class="avatar" src="images/avatars/user-01.jpg" alt="" width="50" height="50">
+                            </div>
+
+                            <div class="comment__content">
+
+                                <div class="comment__info">
+                                    <div class="comment__author">Itachi Uchiha</div>
+
+                                    <div class="comment__meta">
+                                        <div class="comment__time">Jun 15, 2018</div>
+                                        <div class="comment__reply">
+                                            <a class="comment-reply-link" href="#0">Reply</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="comment__text">
+                                    <p>
+                                        Adhuc quaerendum est ne, vis ut harum tantas noluisse, id suas iisque mei. Nec te inani ponderum vulputate,
+                                        facilisi expetenda has et. Iudico dictas scriptorem an vim, ei alia mentitum est, ne has voluptua praesent.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </li> <!-- end comment level 1 -->
+
+                        <li class="thread-alt depth-1 comment">
+
+                            <div class="comment__avatar">
+                                <img class="avatar" src="images/avatars/user-04.jpg" alt="" width="50" height="50">
+                            </div>
+
+                            <div class="comment__content">
+
+                                <div class="comment__info">
+                                    <div class="comment__author">John Doe</div>
+
+                                    <div class="comment__meta">
+                                        <div class="comment__time">Jun 15, 2018</div>
+                                        <div class="comment__reply">
+                                            <a class="comment-reply-link" href="#0">Reply</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="comment__text">
+                                    <p>
+                                        Sumo euismod dissentiunt ne sit, ad eos iudico qualisque adversarium, tota falli et mei. Esse euismod
+                                        urbanitas ut sed, et duo scaevola pericula splendide. Primis veritus contentiones nec ad, nec et
+                                        tantas semper delicatissimi.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <ul class="children">
+
+                                <li class="depth-2 comment">
+
+                                    <div class="comment__avatar">
+                                        <img class="avatar" src="images/avatars/user-03.jpg" alt="" width="50" height="50">
+                                    </div>
+
+                                    <div class="comment__content">
+
+                                        <div class="comment__info">
+                                            <div class="comment__author">Kakashi Hatake</div>
+
+                                            <div class="comment__meta">
+                                                <div class="comment__time">Jun 15, 2018</div>
+                                                <div class="comment__reply">
+                                                    <a class="comment-reply-link" href="#0">Reply</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="comment__text">
+                                            <p>
+                                                Duis sed odio sit amet nibh vulputate
+                                                cursus a sit amet mauris. Morbi accumsan ipsum velit. Duis sed odio sit amet nibh vulputate
+                                                cursus a sit amet mauris
+                                            </p>
+                                        </div>
+
+                                    </div>
+
+                                    <ul class="children">
+
+                                        <li class="depth-3 comment">
+
+                                            <div class="comment__avatar">
+                                                <img class="avatar" src="images/avatars/user-04.jpg" alt="" width="50" height="50">
+                                            </div>
+
+                                            <div class="comment__content">
+
+                                                <div class="comment__info">
+                                                    <div class="comment__author">John Doe</div>
+
+                                                    <div class="comment__meta">
+                                                        <div class="comment__time">Jun 15, 2018</div>
+                                                        <div class="comment__reply">
+                                                            <a class="comment-reply-link" href="#0">Reply</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="comment__text">
+                                                    <p>
+                                                        Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est
+                                                        etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum.
+                                                    </p>
+                                                </div>
+
+                                            </div>
+
+                                        </li>
+
+                                    </ul>
+
+                                </li>
+
+                            </ul>
+
+                        </li> <!-- end comment level 1 -->
+
+                        <li class="depth-1 comment">
+
+                            <div class="comment__avatar">
+                                <img class="avatar" src="images/avatars/user-02.jpg" alt="" width="50" height="50">
+                            </div>
+
+                            <div class="comment__content">
+
+                                <div class="comment__info">
+                                    <div class="comment__author">Shikamaru Nara</div>
+
+                                    <div class="comment__meta">
+                                        <div class="comment__time">Jun 15, 2018</div>
+                                        <div class="comment__reply">
+                                            <a class="comment-reply-link" href="#0">Reply</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="comment__text">
+                                    <p>Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem.</p>
+                                </div>
+
+                            </div>
+
+                        </li>  <!-- end comment level 1 -->
+
+                    </ol>
+                    <!-- END commentlist -->
+
+                </div> <!-- end col-full -->
+            </div> <!-- end comments -->
+
+            <div class="row comment-respond">
+
+                <!-- START respond -->
+                <div id="respond" class="col-full">
+
+                    <h3 class="h2">Add Comment <span>Your email address will not be published</span></h3>
+
+                    <form name="contactForm" id="contactForm" method="post" action="" autocomplete="off">
+                        <fieldset>
+
+                            <div class="form-field">
+                                <input name="cName" id="cName" class="full-width" placeholder="Your Name*" value="" type="text">
+                            </div>
+
+                            <div class="form-field">
+                                <input name="cEmail" id="cEmail" class="full-width" placeholder="Your Email*" value="" type="text">
+                            </div>
+
+                            <div class="form-field">
+                                <input name="cWebsite" id="cWebsite" class="full-width" placeholder="Website" value="" type="text">
+                            </div>
+
+                            <div class="message form-field">
+                                <textarea name="cMessage" id="cMessage" class="full-width" placeholder="Your Message*"></textarea>
+                            </div>
+
+                            <input name="submit" id="submit" class="btn btn--primary btn-wide btn--large full-width" value="Add Comment" type="submit">
+
+                        </fieldset>
+                    </form> <!-- end form -->
+
+                </div>
+                <!-- END respond-->
+
+            </div> <!-- end comment-respond -->
+
+        </div> <!-- end comments-wrap -->*@
+        </div>
+    </section> <!-- end s-content -->
+
+@section scripts{
+
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/tinymce/tinymce.min.js"></script>
+    <script src="~/Scripts/tinymce/jquery.tinymce.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            tinymce.init({
+                selector: '#CommentBody'
+            });
+        });
+
+
+
+
+    </script>}
